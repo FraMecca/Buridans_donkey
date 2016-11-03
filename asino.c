@@ -193,7 +193,6 @@ main(int argc, char *argv[])
 
 	/* 
 	 * always pass head
-	 * prev is next and next is prev
 	 * kill me now
 	 *
 	 */
