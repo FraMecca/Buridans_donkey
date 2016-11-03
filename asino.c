@@ -47,8 +47,8 @@ new_arg(void)
 struct arg*
 push_arg(struct arg* a, struct arg *args)
 {
-	a->next = args;
-	args->prev = a;
+	a->prev = args;
+	args->next = a;
 	return a;
 }
 
@@ -80,8 +80,6 @@ load_arguments(struct arg *args, int idx, char **argv, int argc, struct arg **he
 	if(args == NULL){
 		args = newA;
 		*head = args;
-		args->next = NULL;
-		args->prev = NULL;
 		args->idx = idx;
 	} else {
 		args = push_arg(newA, args);	
@@ -113,7 +111,7 @@ struct arg *
 get_element_node (struct arg *a, int idx)
 {
 	while (idx != a->idx) {
-		a = a->prev;
+		a = a->next;
 	}
 	return a;
 }
@@ -165,7 +163,7 @@ print_elements(struct arg *elements, int nElements)
 { 
 	while (elements != NULL) {
 		printf ("%d. %s\n", elements->idx + 1, elements->str);
-		elements = elements->prev;
+		elements = elements->next;
 	}
 }
 
@@ -175,7 +173,7 @@ free_elements (struct arg *ptr, int n)
 	struct arg *tmp;
 	while (ptr != NULL) {
 		tmp = ptr;
-		ptr = ptr->prev; // :^)
+		ptr = ptr->next; // :^)
 		free (tmp->str);
 		free (tmp);
 	}
