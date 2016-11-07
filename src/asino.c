@@ -7,6 +7,7 @@
 #include <linux/random.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define MAX_L 1000
 
@@ -89,11 +90,11 @@ load_arguments(struct arg *args, int idx, char **argv, int argc, struct arg **he
 }
 
 int
-get_randN(void)
+get_randN(bool randFlag)
 {
 	int seed;
 
-	syscall(SYS_getrandom, &seed, sizeof(int), GRND_NONBLOCK);
+	syscall(SYS_getrandom, &seed, sizeof(int), randFlag);
 	return abs(seed);
 }
 
@@ -142,13 +143,13 @@ swap_elements (struct arg **elements, int x, int y)
 }
 
 struct arg *
-shuffle_elements(struct arg *elements, int nElements)
+shuffle_elements(struct arg *elements, int nElements, bool randFlag)
 {
 	int i, j;
 	double randN;
 	
 	for(i=nElements-1; i>0; i--){
-		randN = (double) get_randN()/(INT_MAX/(i)) ;
+		randN = (double) get_randN(randFlag)/(INT_MAX/(i)) ;
 		j = round(randN);
 		
 		if(i != j){
@@ -159,16 +160,19 @@ shuffle_elements(struct arg *elements, int nElements)
 }
 
 void
-print_elements(struct arg *elements, int nElements)
+print_elements(struct arg *elements, bool numbFlag)
 { 
 	while (elements != NULL) {
-		printf ("%d. %s\n", elements->idx + 1, elements->str);
+		if (numbFlag == true) {
+			printf ("%d. ", elements->idx + 1);
+		}
+		printf ("%s\n", elements->str);
 		elements = elements->next;
 	}
 }
 
 void
-free_elements (struct arg *ptr, int n)
+free_elements (struct arg *ptr)
 {
 	struct arg *tmp;
 	while (ptr != NULL) {
@@ -179,34 +183,91 @@ free_elements (struct arg *ptr, int n)
 	}
 }
 
-/*struct cli_t {*/
-	/*int argc;*/
-	/*char **argv;*/
-/*};*/
+struct cli_t {
+	int argc;
+	char **argv;
+	bool random;
+	bool numbers;
+};
+
+struct cli_t
+parse_args (const int argc, char ** argv)
+{
+	/*
+	 * this function parses the args
+	 * return cli_t struct that contains all the flags used
+	 * parameters:
+	 * --urandom, -u: no arguments, uses /dev/urandom instead of /dev/random
+	 * --no-numbers, -n: no arguments, disable line numbers
+	 */
+	int i, pos = 1;
+	struct cli_t cli;
+
+	cli.random = GRND_NONBLOCK;
+	cli.numbers = true;
+	cli.argc = argc;
+	cli.argv = calloc (argc ,  sizeof (char *));
+
+	for (i = 1; i < argc; ++i) {
+		if (argv[i][0] == '-') {
+			switch (argv[i][1]) {
+				case 'n':
+					cli.numbers = false;
+					cli.argc--;
+					break;
+				case 'u':
+					cli.random = GRND_RANDOM;
+					cli.argc--;
+				default:
+					// long options
+					if (strcmp (argv[i], "--no-numbers") == 0) {
+						cli.numbers = false;
+						cli.argc--;
+					} else if (strcmp (argv[i], "--urandom") == 0) {
+						cli.random = GRND_RANDOM;
+						cli.argc--;
+					}
+			}
+		} else {
+			cli.argv[pos] = strdup (argv[i]);
+			pos++;
+		}
+	}
+		
+	return cli;
+}
+
+void
+free_cli (struct cli_t cli)
+{
+	int i;
+	for (i = 0; i < cli.argc; ++i) {
+		if (cli.argv[i] != NULL) {
+			free (cli.argv[i]);
+		}
+	}
+	free (cli.argv);
+}
+
 
 int
 main(int argc, char *argv[])
 {
 	int nElements;
 	struct arg *elements = NULL, *head = NULL;
-	/*struct cli_t cli;*/
+	struct cli_t cli;
 
-	/* 
-	 * always pass head
-	 * kill me now
-	 *
-	 */
-
-	/*cli = parse_args (argc, argv);*/
+	cli = parse_args (argc, argv);
 	
 	//check argv
-	nElements = load_arguments(elements, 0, argv, argc, &head); // recursive polling
+	nElements = load_arguments(elements, 0, cli.argv, cli.argc, &head); // recursive polling
 	// now head stores the beginning of the list
 
-	if((head = shuffle_elements(head, nElements))){
-		print_elements(head, nElements);
-		free_elements (head, nElements);
+	if((head = shuffle_elements(head, nElements, cli.random))){
+		print_elements(head, cli.numbers);
+		free_elements (head);
 	}
+	free_cli (cli);
 
 	return 0;
 }

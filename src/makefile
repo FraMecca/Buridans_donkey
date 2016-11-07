@@ -1,4 +1,4 @@
-ALL = src/asino.c 
+ALL = asino.c 
 LOCPATH = ./bin
 INSTALLPATH = /usr/local
 LFLAGS =  -lm
