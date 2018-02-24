@@ -2,9 +2,26 @@
 Written in c++, c and python, this program given some choices orders them in casual order.
 More info at: http://francescomecca.eu/index.php/archives/207
 
+# D
+
+The D version is the most complete and provides the following options:
+
+	-n --numbers enable number output on screen
+	-d --divider divide the arguments using a different divider
+	-v --version show version and exit
+	-e  --engine Choose the RNG between "mt" (Mersenne-Twister, default), "x" (xorshift),
+					"dr" (/dev/random), "du" (/dev/urandom)
+	
+The program can also be used piped to another process.
+
+	$ echo D C++ | ./asino -d " " -n 1
+	1. D
+	2. C++
+
+
 # C
 
-The C version is the most complete. It makes a system call to get a random pool of numbers.
+The C version makes a system call to get a random pool of numbers.
 
 Compile including math library.
 
