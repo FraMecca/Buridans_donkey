@@ -1,6 +1,8 @@
 # Buridan's donkey
-Written in c++, c and python, this program given some choices orders them in casual order.
-More info at: http://francescomecca.eu/index.php/archives/207
+Originally written in c++ and python, this program given some choices orders them in casual order. 
+I wrote about it at: http://francescomecca.eu/index.php/archives/207
+
+Now I rewrite the Buridan's donkey in whatever language I feel passionate about.
 
 # D
 
