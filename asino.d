@@ -22,7 +22,7 @@ extern(C)
 
 string versionSt = "...a man, being just as hungry as thirsty,
 and placed in between food and drink,
-must necessarily remain where he is and starve to death.
+must necessarily remain where he is and starve to death
 
 Aristole";
 
@@ -61,7 +61,7 @@ main (string[] args)
 
 	foreach (i, arg; res) {
 		if (!num) writeln(arg);
-		else writefln("%s: %s", i, arg);
+		else writefln("%s: %s", i + 1, arg);
 	}
 }
 
