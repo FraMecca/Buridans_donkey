@@ -52,7 +52,7 @@ main (string[] args)
 	string[] toProcess = void;
 	if(isaTTY()){
 		// read stdin, ignore cli args
-		toProcess = to!(string[])(stdin.byLine().array());
+		toProcess = to!(string[])(File("/dev/stdin").byLineCopy.array());
 	} else {
 		toProcess = args[1 .. $]; // remove program name
 	}
