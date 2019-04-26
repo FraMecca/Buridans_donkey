@@ -1,0 +1,8 @@
+name "web"
+description "Asino web version"
+authors "danseraf"
+copyright "Copyright © 2019, danseraf"
+license "GPLv3"
+dependency "vibe-d" version="~>0.8.5"
+versions "VibeDefaultMain"
+dflags "-J view/" 

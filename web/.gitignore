@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/web
+web.so
+web.dylib
+web.dll
+web.a
+web.lib
+web-test-*
+*.exe
+*.o
+*.obj
+*.lst
