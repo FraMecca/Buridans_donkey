@@ -89,8 +89,11 @@ void handleRequest(scope HTTPServerRequest req, scope HTTPServerResponse res)
     auto args = path[2].name.split(",");
     const result = shuffle(args, engine);
     result.visit!((string [] r) {
-            immutable body = "Asino says:</br><ul>" ~ "<li>" ~ r.join("</li><li>") ~ "</ul>";
             res.headers["Content-Type"] = "text/html";
+            immutable body = "Asino says:</br>" ~
+                                 (r.length == 2 ?
+                                  r[0] :
+                                  "<ul><li>" ~ r.join("</li><li>") ~ "</ul>");
             res.writeBody(body);
         },
         (Error e) { error(); }
