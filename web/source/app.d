@@ -88,8 +88,8 @@ void handleRequest(scope HTTPServerRequest req, scope HTTPServerResponse res)
     auto engine = path[1].name;
     auto args = path[2].name.split(",");
     const result = shuffle(args, engine);
+
     result.visit!((string [] r) {
-            res.headers["Content-Type"] = "text/html";
             immutable body = "Asino says:</br>" ~
                                  (r.length == 2 ?
                                   r[0] :
