@@ -73,11 +73,37 @@ if (gen == "/dev/random" || gen == "/dev/urandom")
 	}
 }
 
+enum firstPage = `<h1> Buridan's Donkey </h1>
+<blockquote>
+...a man, being just as hungry as thirsty, and placed in between food and drink, must necessarily remain where he is and starve to death.
+</blockquote>
+<p> This is the Buridan's Donkey main page.</p>
+<p> Do not be afraid to ask for the help of the Donkey</p>
+<p> you have four possibilities:<ul>
+<li><a href="/x/true,false">/x/true,false</a>: to use Xorshift</li>
+<li><a href="/mt/true,false">/mt/true,false</a>: to use Mersenne Twister</li>
+<li><a href="/du/true,false">/du/true,false</a>: to use /dev/urandom</li>
+<li><a href="/dr/true,false">/dr/true,false</a>: to use /dev/random</li>
+</ul></p>
+`;
+
+void indexPage(scope HTTPServerRequest req, scope HTTPServerResponse res)
+{
+    res.writeBody(firstPage);
+}
+
 void handleRequest(scope HTTPServerRequest req, scope HTTPServerResponse res)
 {
     void error(){
+        immutable resp = "Invalid request.<br>For usage see <a href=\"/\">main page</a>";
         res.statusCode = 400;
+        res.writeBody(resp);
     }
+
+    res.headers["Content-Type"] = "text/html";
+
+    if(req.path == "/" || req.path == "/index.html")
+        return indexPage(req, res);
 
     immutable path = req.requestPath.bySegment.array;
     if(path.length != 3){// path[0] == ""
