@@ -3,26 +3,46 @@ import std.array : array;
 import std.random;
 import std.file;
 
-const (string[]) shuffle(string[] args, const string t)
+import vibe.http.server;
+import taggedalgebraic;
+
+struct Error {};
+union U {
+    string[] args;
+    Error e;
+}
+
+alias Result = TaggedUnion!U;
+
+auto shuffle(string[] args, const string t)
 {
-	if(t == "mt"){
+    Result r;
+	switch(t){
+    case "mt":
 		Mt19937 gen;
 		gen.seed(unpredictableSeed);
 		args.randomShuffle(gen);
-	} else if (t == "x"){
+        break;
+	case "x":
 		Xorshift32 gen;
 		gen.seed(unpredictableSeed);
 		args.randomShuffle(gen);
-	} else if (t == "du"){
+        break;
+	case "du":
 		auto gen = DevRandomGen!"/dev/urandom"();
 		args.randomShuffle(gen);
-	} else if (t == "dr"){
+        break;
+	case "dr":
 		auto gen = DevRandomGen!"/dev/random"();
 		args.randomShuffle(gen);
-	} else {
-		throw new Exception("Wrong arguments");
+        break;
+    default:
+        r = Error();
+        return r;
 	}
-	return args;
+
+    r = args;
+	return r ;
 }
 
 
