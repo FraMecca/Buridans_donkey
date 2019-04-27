@@ -75,14 +75,26 @@ if (gen == "/dev/random" || gen == "/dev/urandom")
 
 void handleRequest(scope HTTPServerRequest req, scope HTTPServerResponse res)
 {
+    void error(){
+        res.statusCode = 400;
+    }
+
     immutable path = req.requestPath.bySegment.array;
-    enforce(path.length == 3); // path[0] == ""
-    auto engine = path[1].toString;
-    auto args = path[2].toString.split(",");
+    if(path.length != 3){// path[0] == ""
+        error();
+        return ;
+    }
+
+    auto engine = path[1].name;
+    auto args = path[2].name.split(",");
     const result = shuffle(args, engine);
-    immutable body = "Asino says:</br><ul>" ~ "<li>" ~ result.join("</li><li>") ~ "</ul>";
-    res.headers["Content-Type"] = "text/html";
-    res.writeBody(body);
+    result.visit!((string [] r) {
+            immutable body = "Asino says:</br><ul>" ~ "<li>" ~ r.join("</li><li>") ~ "</ul>";
+            res.headers["Content-Type"] = "text/html";
+            res.writeBody(body);
+        },
+        (Error e) { error(); }
+    );
 }
 
 shared static this()
