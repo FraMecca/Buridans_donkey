@@ -47,7 +47,7 @@ auto shuffle(string[] args, const string t)
 
 
 template DevRandomGen(string gen)
-	if (gen == "/dev/random" || gen == "/dev/urandom")
+if (gen == "/dev/random" || gen == "/dev/urandom")
 {
 	struct DevRandomGen
 	{
