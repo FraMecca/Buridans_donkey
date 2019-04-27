@@ -100,11 +100,28 @@ void handleRequest(scope HTTPServerRequest req, scope HTTPServerResponse res)
     );
 }
 
-shared static this()
+void main(string[] argv)
 {
+    import std.getopt;
+    import vibe.core.core : runEventLoop, lowerPrivileges;
+
+    ushort port = 8080;
+    string host = "127.0.0.1";
+    auto rslt = getopt(argv,
+                       "port|p", "Bind to this port.", &port,
+                       "host|H", "Listen to this interface.", &host,
+    );
+
+    if (rslt.helpWanted){
+        defaultGetoptPrinter("Some information about the program.",
+                    rslt.options);
+        return;
+    }
     auto settings = new HTTPServerSettings;
-    settings.port = 8080;
-    settings.bindAddresses = ["::1", "127.0.0.1"];
+    settings.port = port;
+    settings.bindAddresses = [host];
 
     listenHTTP(settings, &handleRequest);
+    lowerPrivileges();
+    runEventLoop();
 }
