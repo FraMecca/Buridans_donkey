@@ -1,10 +1,5 @@
-import vibe.appmain;
-import vibe.http.server;
-import std.stdio;
-import std.range;
 import std.string;
-import std.exception;
-import std.array;
+import std.array : array;
 import std.random;
 import std.file;
 
