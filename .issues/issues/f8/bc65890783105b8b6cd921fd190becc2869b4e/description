@@ -1,1 +1,3 @@
 Try a 512MB file as pipe to asino and see it print nothing
+
+The problem is that isaTTY return false
