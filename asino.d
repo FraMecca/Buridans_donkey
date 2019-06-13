@@ -6,13 +6,14 @@
 */
 module asino;
 
-import std.stdio;
 import std.random;
 import std.getopt;
-import std.file;
-import std.conv;
-import std.array;
-import std.algorithm;
+
+import std.stdio : writeln, writefln, stdin;
+import std.file : read;
+import std.typecons : Yes, No;
+import std.array : join, array;
+import std.algorithm : splitter;
 
 extern(C)
 {
@@ -49,15 +50,18 @@ main (string[] args)
  		writeln(versionSt);
  	}
 
-	string[] toProcess = void;
+	string[] lines = void;
+    writeln(isaTTY());
 	if(isaTTY()){
 		// read stdin, ignore cli args
-		toProcess = to!(string[])(File("/dev/stdin").byLineCopy.array());
+		auto p = stdin.byLineCopy(No.keepTerminator).array();
+        writeln(p[2]);
+        lines = p;
 	} else {
-		toProcess = args[1 .. $]; // remove program name
+		lines = args[1 .. $]; // remove program name
 	}
 
-	auto res = toProcess.divide(div).shuffle(engine);
+	auto res = lines.divide(div).shuffle(engine);
 
 	foreach (i, arg; res) {
 		if (!num) writeln(arg);
@@ -68,7 +72,7 @@ main (string[] args)
 string[] divide(string[] args, string div)
 {
 	if (div == "") return args;
-	else return to!(string[])(args.join.splitter(div).array);
+	else return args.join.splitter(div).array;
 }
 
 string[] shuffle(string[] args, string t)
