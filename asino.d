@@ -21,12 +21,11 @@ extern(C)
 	int poll(pollfd *fds, int nfds, int timeout);
 }
 
+enum VERSION = "0.0.1";
 string versionSt = "...a man, being just as hungry as thirsty,
 and placed in between food and drink,
 must necessarily remain where he is and starve to death
-
-Aristole";
-
+Aristole\n\n"~"asino "~VERSION;
 
 void
 main (string[] args)
@@ -51,9 +50,8 @@ main (string[] args)
  	}
 
 	string[] lines = void;
-    writeln(isaTTY());
-	if(isaTTY()){
-		// read stdin, ignore cli args
+    if(isaTTY()){
+        // read stdin, ignore cli args
 		auto p = stdin.byLineCopy(No.keepTerminator).array();
         writeln(p[2]);
         lines = p;
